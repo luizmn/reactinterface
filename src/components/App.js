@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { without } from 'lodash';
 import '../css/App.css';
 
 import AddAppointments from './AddAppointments';
@@ -10,8 +11,42 @@ class App extends Component {
     super();
     this.state = {
       myAppointments: [],
+      formDisplay: false,
       lastIndex: 0
     };
+    this.deleteAppointment = this.deleteAppointment.bind(this);
+    this.toggleForm = this.toggleForm.bind(this);
+    this.addAppointment = this.addAppointment.bind(this);
+  }
+
+  toggleForm() {
+    this.setState({
+      formDisplay: !this.state.formDisplay
+    }
+
+    )
+
+  }
+
+  addAppointment(apt) {
+    let tempApts = this.state.myAppointments;
+    apt.aptId = this.state.lastIndex;
+    tempApts.unshift(apt);
+    this.setState({
+      myAppointments: tempApts,
+      lastIndex: this.state.lastIndex + 1
+    });
+  }
+
+
+  deleteAppointment(apt) {
+    let tempApts = this.state.myAppointments;
+    tempApts = without(tempApts, apt);
+
+    this.setState({
+      myAppointments: tempApts
+    }
+    )
   }
 
   componentDidMount() {
@@ -36,9 +71,14 @@ class App extends Component {
           <div className="row">
             <div className="col-md-12 bg-white">
               <div className="container">
-                <AddAppointments />
+                <AddAppointments
+                  formDisplay={this.state.formDisplay}
+                  toggleForm={this.toggleForm}
+                  addAppointment={this.addAppointment}
+                />
                 <SearchAppointments />
-                <ListAppointments appointments={this.state.myAppointments} />
+                <ListAppointments appointments={this.state.myAppointments}
+                  deleteAppointment={this.deleteAppointment} />
               </div>
             </div>
           </div>
