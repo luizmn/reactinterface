@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { without } from 'lodash';
+import { findIndex, without } from 'lodash';
 import '../css/App.css';
 
 import AddAppointments from './AddAppointments';
@@ -21,6 +21,23 @@ class App extends Component {
     this.toggleForm = this.toggleForm.bind(this);
     this.addAppointment = this.addAppointment.bind(this);
     this.changeOrder = this.changeOrder.bind(this);
+    this.searchApts = this.searchApts.bind(this);
+    this.updateInfo = this.updateInfo.bind(this);
+  }
+
+  updateInfo(name, value, id) {
+    let tempApts = this.state.myAppointments;
+    let aptIndex = findIndex(this.state.myAppointments, {
+      aptId: id
+    });
+    tempApts[aptIndex][name] = value;
+    this.setState({
+      myAppointments: tempApts
+    })
+  }
+
+  searchApts(query) {
+    this.setState({ queryText: query });
   }
 
   toggleForm() {
@@ -118,11 +135,13 @@ class App extends Component {
                   orderBy={this.state.orderBy}
                   orderDir={this.state.orderDir}
                   changeOrder={this.changeOrder}
-                />
+                  searchApts={this.searchApts} />
 
                 <ListAppointments
                   appointments={filteredApts}
-                  deleteAppointment={this.deleteAppointment} />
+                  deleteAppointment={this.deleteAppointment}
+                  updateInfo={this.updateInfo}
+                />
               </div>
             </div>
           </div>
